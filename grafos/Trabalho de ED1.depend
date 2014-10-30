@@ -1,0 +1,52 @@
+# depslib dependency file v1.0
+1400714995 source:c:\users\thiago baltar\documents\uff - cc\c projects\trabalho de ed1\main.c
+	<stdio.h>
+	<stdlib.h>
+	"grafo.h"
+
+1400704970 c:\users\thiago baltar\documents\uff - cc\c projects\trabalho de ed1\grafo.h
+
+1400859702 source:c:\users\leonardo\dropbox\trabalho ed1\trabalho de ed1\main.c
+	<stdio.h>
+	<stdlib.h>
+	"grafo.h"
+	"metodosGrafo.h"
+
+1400859043 c:\users\leonardo\dropbox\trabalho ed1\trabalho de ed1\grafo.h
+
+1400864120 c:\users\leonardo\dropbox\trabalho ed1\trabalho de ed1\metodosgrafo.h
+	"grafo.h"
+
+1401584910 source:c:\users\leni\dropbox\trabalho ed1\trabalho de ed1\main.c
+	<stdio.h>
+	<stdlib.h>
+	"grafo.h"
+	"metodosGrafo.h"
+
+1401582188 c:\users\leni\dropbox\trabalho ed1\trabalho de ed1\grafo.h
+
+1401582490 c:\users\leni\dropbox\trabalho ed1\trabalho de ed1\metodosgrafo.h
+	"grafo.h"
+
+1401628665 source:d:\grafos\31-05- grafos\main.c
+	<stdio.h>
+	<stdlib.h>
+	"grafo.h"
+	"metodosGrafo.h"
+
+1401582188 d:\grafos\31-05- grafos\grafo.h
+
+1401628506 d:\grafos\31-05- grafos\metodosgrafo.h
+	"grafo.h"
+
+1402019853 source:c:\grafos\main.c
+	<stdio.h>
+	<stdlib.h>
+	"grafo.h"
+	"metodosGrafo.h"
+
+1401758798 c:\grafos\grafo.h
+
+1402019853 c:\grafos\metodosgrafo.h
+	"grafo.h"
+
