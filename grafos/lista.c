@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "lista.h"
 
 Lista* inicializa_lista(void) {
@@ -9,7 +11,7 @@ Lista* insere(Lista *l, int id, int ligacao) {
 
     novo->id = id;
     novo->ligacao = ligacao;
-    novo->prox = l;
+    novo->proximo = l;
 
     return novo;
 }
@@ -34,7 +36,7 @@ Lista* componentes(Grafo *g, Grafo *orig, int n, Lista *li) {
                 visit = insere(visit, p->id, 0);
             }
 
-            p = p->prox;
+            p = p->proximo;
         }
 
         pos++;
@@ -44,12 +46,12 @@ Lista* componentes(Grafo *g, Grafo *orig, int n, Lista *li) {
 
         while (aux != NULL) {
             j = retira_no(j, aux->id);
-            aux = aux->prox;
+            aux = aux->proximo;
         }
 
         //Chama a função novamente passando o grafo sem os nós já visitados
-        libera_lista(visit);
         return componentes(j, orig, pos, clista);
+        libera_lista(visit);
     }
 
     Lista *aux = clista;
@@ -65,7 +67,7 @@ Lista* componentes(Grafo *g, Grafo *orig, int n, Lista *li) {
     while (aux != NULL) {
         if (aux->ligacao == c) {
             fprintf(arq, "%d ", aux->id);
-            aux = aux->prox;
+            aux = aux->proximo;
         } else {
             c--;
             fprintf(arq, "\n");
@@ -78,14 +80,14 @@ Lista* componentes(Grafo *g, Grafo *orig, int n, Lista *li) {
     system("componentes.txt");
 }
 
-void libera(Lista *l) {
+void libera_lista(Lista *l) {
     if (l != NULL) {
-        libera(l->prox);
+        libera_lista(l->proximo);
         free(l);
     }
 }
 
-void imprime(Lista *l) {
+void imprime_lista(Lista *l) {
     Lista *li = l;
 
     while (li != NULL) {
@@ -100,13 +102,13 @@ int tamanho(Lista *l) {
 
     while (li != NULL) {
         cont++;
-        li = li->prox;
+        li = li->proximo;
     }
 
     return cont;
 }
 
-int busca(Lista *l, int elemento1, int elemento2) {
+int busca_lista(Lista *l, int elemento1, int elemento2) {
     Lista *li = l;
 
     while (li != NULL) {
@@ -114,7 +116,7 @@ int busca(Lista *l, int elemento1, int elemento2) {
             return 1;
         }
 
-        li = li->prox;
+        li = li->proximo;
     }
 
     return 0;

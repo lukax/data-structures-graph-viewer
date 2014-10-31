@@ -1,4 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "grafo.h"
+#include "lista.h"
 
 Grafo* inicializa(void) {
     return NULL;
@@ -73,7 +76,7 @@ Grafo *retira_no(Grafo *g , int no) {
     }
 
     if (ant == NULL) {
-        g = g->prox;
+        g = g->proximo;
     } else {
         ant->proximo = p->proximo;
     }
@@ -82,73 +85,71 @@ Grafo *retira_no(Grafo *g , int no) {
     return g;
 }
 
-void retira_aresta(TGrafo*g, int id1, int id2) {
-    TGrafo *p = busca(g,id1), *q = busca(g,id2);
+void retira_aresta(Grafo *g, int id1, int id2) {
+    Grafo *p = busca(g, id1), *q = busca(g, id2);
 
-    if ((!p) || (!q)) {
+    if ((p == NULL) || (q == NULL)) {
         return;
     }
 
-    TViz *viz = p -> prim, *ant = NULL;
+    Vizinho *viz = p->primeiro, *ant = NULL;
 
-    while ((viz) && (viz -> id != id2)) {
+    while ((viz != NULL) && (viz->id != id2)) {
         ant = viz;
-        viz = viz ->prox_viz;
-
+        viz = viz->proximo_vizinho;
     }
 
-    if (!viz) {
+    if (viz == NULL) {
         return;
     }
 
-    if (!ant) {
-        p -> prim = p -> prim -> prox_viz;
+    if (ant == NULL) {
+        p->primeiro = p->primeiro->proximo_vizinho;
     } else {
-        ant -> prox_viz = viz -> prox_viz;
+        ant->proximo_vizinho = viz->proximo_vizinho;
     }
 
     free(viz);
 
-    viz = q -> prim;
+    viz = q->primeiro;
     ant = NULL;
 
-    while ((viz) && (viz -> id != id1)) {
+    while ((viz != NULL) && (viz->id != id1)) {
         ant = viz;
-        viz = viz -> prox_viz;
+        viz = viz->proximo_vizinho;
     }
 
-    if (!viz) {
+    if (viz == NULL) {
         return;
     }
 
-    if (!ant) {
-        q -> prim = q -> prim -> prox_viz;
+    if (ant == NULL) {
+        q->primeiro = q->primeiro->proximo_vizinho;
     } else {
-        ant -> prox_viz = viz -> prox_viz;
+        ant->proximo_vizinho = viz->proximo_vizinho;
     }
 
     free(viz);
 }
 
-int qtd_nos(TGrafo*g){
+int qtd_nos(Grafo *g) {
+    int cont = 0;
+    Grafo *p = g;
 
-    int cont=0;
-    TGrafo* p = g;
-    while(p){
-        p = p->prox;
+    while(p != NULL) {
+        p = p->proximo;
         cont++;
     }
-    return cont;
 
+    return cont;
 }
 
- void gera_html(TGrafo*g){
-    if(!g){
+void gera_html(Grafo *g) {
+    if(g == NULL) {
         printf("GRAFO VAZIO");
-    } else{
-        TGrafo * p = g;
+    } else {
+        Grafo *p = g;
         int qnos, i, j, lin, col;
-        int**adj;
         qnos = qtd_nos(p);
         int nos[qnos];
         char info[50];
@@ -158,31 +159,32 @@ int qtd_nos(TGrafo*g){
         html = fopen("grafo.html","w");
 
         //gravando primeira parte do arquivo HTML
-        while( (fgets(info, sizeof(info), arqPart1))!=NULL )
+        while((fgets(info, sizeof(info), arqPart1)) != NULL) {
             fprintf(html, "%s", info);
-
-        //Percorre o grafo e salva cada ligação e nó
-        while (p) {
-            fprintf(html, "{source: \"%d\", target: \"%d\"},\n", p->id,p->id);
-            TViz *q = p -> prim;
-        while (q) {
-            if (q -> prox_viz) {
-                fprintf(html, "{source: \"%d\", target: \"%d\"},\n", p->id,q->id);
-            } else {
-               fprintf(html, "{source: \"%d\", target: \"%d\"},\n", p->id,q->id);
-            }
-
-            q = q -> prox_viz;
-
         }
 
-        p = p -> prox;
+        //Percorre o grafo e salva cada ligação e nó
+        while (p != NULL) {
+            fprintf(html, "{source: \"%d\", target: \"%d\"},\n", p->id,p->id);
+            Vizinho *q = p->primeiro;
 
+            while (q != NULL) {
+                if (q->proximo_vizinho) {
+                    fprintf(html, "{source: \"%d\", target: \"%d\"},\n", p->id,q->id);
+                } else {
+                   fprintf(html, "{source: \"%d\", target: \"%d\"},\n", p->id,q->id);
+                }
+
+                q = q->proximo_vizinho;
+            }
+
+            p = p->proximo;
     }
 
         //gravando segunda parte do arquivo HTML
-        while( (fgets(info, sizeof(info), arqPart2))!=NULL )
+        while((fgets(info, sizeof(info), arqPart2)) != NULL) {
 			fprintf(html, "%s", info);
+        }
 
         fclose(arqPart1);
         fclose(arqPart2);
@@ -191,201 +193,220 @@ int qtd_nos(TGrafo*g){
     }
  }
 
-void libera(TGrafo *g) {
-    TGrafo *p = g;
+void libera(Grafo *g) {
+    Grafo *p = g;
 
-    while (p) {
-        TViz *v = p -> prim;
+    while (p != NULL) {
+        Vizinho *v = p->primeiro;
 
-        while (v) {
-            TViz *q = v;
-            v = v -> prox_viz;
+        while (v != NULL) {
+            Vizinho *q = v;
+            v = v->proximo_vizinho;
             free(q);
         }
 
-        TGrafo *r = p;
-        p = p -> prox;
+        Grafo *r = p;
+        p = p->proximo;
         free(r);
     }
 }
 
-void imprime(TGrafo *g){
-    TGrafo *p = g;
+void imprime(Grafo *g) {
+    Grafo *p = g;
 
-    while (p) {
+    while (p != NULL) {
         printf("No: %d | Visitados: %d\n\n   Vizinhos: ", p->id, p->visitado);
-        TViz *q = p -> prim;
+        Vizinho *q = p->primeiro;
 
-        while (q) {
-            if (q -> prox_viz) {
+        while (q != NULL) {
+            if (q->proximo_vizinho) {
                 printf("%d, ",q -> id);
             } else {
                 printf("%d\n",q -> id);
             }
 
-            q = q -> prox_viz;
+            q = q->proximo_vizinho;
         }
 
-        p = p -> prox;
+        p = p->proximo;
         printf("\n\n");
     }
 }
 
-void zera_visitados(TGrafo* g){
+void zera_visitados(Grafo *g) {
+    Grafo *p = g;
 
-    TGrafo * p = g;
-    while(p){
+    while(p != NULL){
         p->visitado = 0;
-        p = p->prox;
+        p = p->proximo;
     }
 }
 
-TGrafo* copia(TGrafo*g){
-    TGrafo * p = g;
-    TGrafo * novo = inicializa();
-    TGrafo * copia = inicializa();
-    if(!p)return NULL;
-    while (p) {
-        int i = p->id;
-        novo = insere_no(novo,i);
-        TViz *q = p -> prim;
-    while (q) {
-            if (q -> prox_viz) {
-               insere_aresta(novo,p->id,q->id);
-            } else {
-               insere_aresta(novo,p->id,q->id);
-            }
-            q = q -> prox_viz;
-        }
-        p = p -> prox;
+Grafo* copia(Grafo *g) {
+    Grafo *p = g;
+    Grafo *novo = inicializa();
+    Grafo *copia = inicializa();
 
+    if(p == NULL) return NULL;
+
+    while (p != NULL) {
+        int i = p->id;
+        novo = insere_no(novo, i);
+        Vizinho *q = p->primeiro;
+
+        while (q != NULL) {
+            if (q->proximo_vizinho != NULL) {
+               insere_aresta(novo, p->id, q->id);
+            } else {
+               insere_aresta(novo, p->id, q->id);
+            }
+
+            q = q->proximo_vizinho;
+        }
+
+        p = p->proximo;
     }
 
     //copiando de volta na ordem certa
-       while (novo) {
+    while (novo != NULL) {
         int i = novo->id;
-        copia = insere_no(copia,i);
-        TViz *q = novo -> prim;
-    while (q) {
-            if (q -> prox_viz) {
-               insere_aresta(copia,novo->id,q->id);
+        copia = insere_no(copia, i);
+        Vizinho *q = novo->primeiro;
+
+        while (q != NULL) {
+            if (q->proximo_vizinho != NULL) {
+               insere_aresta(copia, novo->id, q->id);
             } else {
-               insere_aresta(copia,novo->id,q->id);
+               insere_aresta(copia, novo->id, q->id);
             }
-            q = q -> prox_viz;
+
+            q = q->proximo_vizinho;
         }
-        novo = novo -> prox;
-       }
-       libera(novo);
+
+        novo = novo->proximo;
+    }
+
+    libera(novo);
     return copia;
 }
 
-void pontes(TGrafo*g) {
-   TL* t = inicializa_lista();
-   TGrafo *j = g;
-   TGrafo * p = g;
+void pontes(Grafo *g) {
+    Lista *t = inicializa_lista();
+    Grafo *j = g;
+    Grafo *p = g;
 
-   while (p) {
-        TViz *q = p -> prim;
+    while (p != NULL) {
+        Vizinho *q = p->primeiro;
 
-    while (q) {
-        //Faz uma copia do grafo original, que será testado retirando a aresta em questão
-         TGrafo * clone = copia(j);
-         //Depois de retirar a aresta marca os visiados do clone
-         retira_aresta(clone,p->id,q->id);
-         conexidade(clone, clone);
-         //Testa se o clone deixa de ser conexo e insere na lista a ligação
-         if(testar_conexo(clone)==0) {
-           //verifica se a ligação ja está na lista (Ex.: 10-8 = 8-10)
-           if(busca_na_lista(t, p->id, q->id)==0)
-           t = insere_na_lista(t, p->id,q->id);
+        while (q != NULL) {
+            //Faz uma copia do grafo original, que será testado retirando a aresta em questão
+            Grafo *clone = copia(j);
 
-         }
-        libera(clone);
-        q = q -> prox_viz;
+            //Depois de retirar a aresta marca os visiados do clone
+            retira_aresta(clone ,p->id, q->id);
+            conexidade(clone, clone);
+
+            //Testa se o clone deixa de ser conexo e insere na lista a ligação
+            if(conexo(clone) == 0) {
+                //verifica se a ligação ja está na lista (Ex.: 10-8 = 8-10)
+                if(busca_lista(t, p->id, q->id) == 0) {
+                    t = insere(t, p->id,q->id);
+                }
+            }
+
+            libera(clone);
+            q = q->proximo_vizinho;
         }
-        p = p -> prox;
+
+        p = p->proximo;
     }
 
     //Percorre a lista escrevendo as pontes no arquivo
-   FILE *pontes;
-   int tam = tam_lista(t);
-   TL* l_aux = t;
+    FILE *pontes;
+    int tam = tamanho(t);
+    Lista *l_aux = t;
     pontes = fopen("pontes.txt", "w");
     fprintf(pontes, "%d \n", tam);
-    while(l_aux){
-        fprintf(pontes, "%d %d \n", l_aux->id, l_aux->ligacao);
-        l_aux = l_aux->prox;
-    }
 
+    while(l_aux != NULL) {
+        fprintf(pontes, "%d %d \n", l_aux->id, l_aux->ligacao);
+        l_aux = l_aux->proximo;
+    }
 
     fclose(pontes);
     libera_lista(t);
     system("pontes.txt");
-
 }
 
-void conexidade(TGrafo *g,TGrafo *g1){
+void conexidade(Grafo *g, Grafo *g1) {
+    Grafo *p = g;
+    Vizinho *v;
+    Grafo *j;
 
-    TGrafo *p = g;
-    TViz * v;
-    TGrafo *j;
     //Verifica se o grafo existe e se o nó já foi visitado
-    if((p)&&(p->visitado==0)){
+    if((p != NULL) && (p->visitado == 0)) {
         p->visitado = 1;
-        v = p->prim;
-        //Enquanto o nó tiver vizinhos, ele testa se o vizinho não foi visitado e chama a recursão
-        while(v){
+        v = p->primeiro;
 
-            j = busca(g1,v->id);
-            if((j)&&(j->visitado==0)){
-                conexidade(j,g1);
+        //Enquanto o nó tiver vizinhos, ele testa se o vizinho não foi visitado e chama a recursão
+        while(v != NULL) {
+            j = busca(g1, v->id);
+
+            if((j != NULL) && (j->visitado == 0)) {
+                conexidade(j, g1);
             }
-                v=v->prox_viz;
-            }
+
+            v = v->proximo_vizinho;
+        }
     }
 }
 
-void salva_grafo(TGrafo*g, char* nome){
-   TL* t = inicializa_lista();
-   TL* l2 = inicializa_lista();
-   TGrafo *j = g;
-   TGrafo * p = g;
+void salva(Grafo *g, char *nome){
+    Lista *t = inicializa_lista();
+    Lista *l2 = inicializa_lista();
+    Grafo *j = g;
+    Grafo *p = g;
 
-   while (p) {
+    while (p != NULL) {
         //salva na Lista os nós
-        l2 = insere_na_lista(l2,p->id,0);
-        TViz *q = p -> prim;
-        while (q) {
-            if (q -> prox_viz) {
-                   if(busca_na_lista(t, p->id, q->id)==0)
-                   t = insere_na_lista(t, p->id,q->id);
+        l2 = insere(l2, p->id, 0);
+        Vizinho *q = p->primeiro;
+
+        while (q != NULL) {
+            if (q->proximo_vizinho != NULL) {
+               if(busca_lista(t, p->id, q->id) == 0) {
+                    t = insere(t, p->id,q->id);
+               }
             } else {
-                    if(busca_na_lista(t, p->id, q->id)==0)
-                    t  = insere_na_lista(t, p->id,q->id);
-
+                if(busca_lista(t, p->id, q->id) == 0) {
+                    t  = insere(t, p->id,q->id);
+                }
             }
-            q = q -> prox_viz;
-        }
-        p = p -> prox;
 
-   }
-    FILE * arq;
-    arq = fopen(nome,"w");
+            q = q->proximo_vizinho;
+        }
+
+        p = p->proximo;
+    }
+
+    FILE *arq;
+    arq = fopen(nome, "w");
     //primeira linha do arquivo: Quantidade de nós
     fprintf(arq, "%d\n", qtd_nos(j));
 
-    TL* l = t;
-    TL* l3 = l2;
+    Lista *l = t;
+    Lista *l3 = l2;
+
     //salva no arquivo os nós
-       while(l3){
+    while(l3 != NULL){
         fprintf(arq, "%d \n", l3->id);
-        l3 = l3->prox;
+        l3 = l3->proximo;
     }
+
     //salva no arquivo as ligaçoes;
-    while(l){
+    while(l != NULL){
         fprintf(arq, "%d %d \n", l->id, l->ligacao);
-        l = l->prox;
+        l = l->proximo;
     }
 
     fclose(arq);
@@ -394,4 +415,24 @@ void salva_grafo(TGrafo*g, char* nome){
     system(nome);
 }
 
-int testar_conexo(TGrafo *g) {
+int conexo(Grafo *g) {
+    int controle = 0;
+    Grafo *auxiliar = g;
+
+    while(auxiliar != NULL) {
+        if(auxiliar->visitado == 1) {
+            auxiliar = auxiliar->proximo;
+        } else {
+            controle = 1;
+            break;
+        }
+    }
+
+    if(controle == 0) {
+        zera_visitados(g);
+        return 1;
+    } else {
+        zera_visitados(g);
+        return 0;
+    }
+}

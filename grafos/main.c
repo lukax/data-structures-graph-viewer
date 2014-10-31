@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "grafo.h"
-#include "metodosGrafo.h"
+#include "lista.h"
 
-int main (int argc, char*argv[]){
-    TGrafo * teste = inicializa();
-    TGrafo * auxiliar;
+int main (int argc, char *argv[]) {
+    Grafo *teste = inicializa();
+    Grafo *auxiliar;
 
     int tamanhoDoGrafo = 0;
     int no;
@@ -26,18 +26,17 @@ int main (int argc, char*argv[]){
     }
 
     // Lê a primeira linha do arquivo que é a quantidade de nós que o grafo tem.
-    fscanf(arq,"%d", &tamanhoDoGrafo);
+    fscanf(arq, "%d", &tamanhoDoGrafo);
 
     // Lê todas as linhas que representam cada nó e os insere no grafo.
     int i;
     for (i = 0; i < tamanhoDoGrafo; i++) {
-        fscanf(arq,"%d", &no);
+        fscanf(arq, "%d", &no);
         teste = insere_no(teste, no);
     }
 
-
     // Lê todas as linha do arquivo que representam as arestas e as insere no grafo.
-    while (fscanf(arq,"%d %d", &no1, &no2) != EOF) {
+    while (fscanf(arq, "%d %d", &no1, &no2) != EOF) {
         insere_aresta(teste, no1, no2);
     }
 
@@ -48,7 +47,7 @@ int main (int argc, char*argv[]){
     printf("<GRAFOS - ED I (2014.1) - Romulo, Leonardo e Thiago> \n");
     printf("       PRESSIONE ENTER PARA INICIAR \n");
 
-    do{
+    do {
         scanf("%c", &linha);
 
         printf("-----------------MENU-------------\n");
@@ -59,63 +58,64 @@ int main (int argc, char*argv[]){
         printf("\n");
         printf("ENTRADA: ");
         scanf("%c", &usuario);
-       if((usuario=='i')||(usuario=='a')||(usuario=='r')||(usuario=='t')||(usuario=='c')||(usuario=='s')||(usuario=='p')||(usuario=='g')) {
-        switch(usuario){
-        case 'i':
-            printf("No: ");
-            scanf("%d",&n);
-            printf("\n ");
-            teste = insere_no(teste,n);
-           break;
-        case 'a':
-            printf("No A: ");
-            scanf("%d",&a1);
-            printf("No B: ");
-            scanf("%d",&a2);
-            insere_aresta(teste,a1,a2);
-            break;
-        case 'r':
-            printf("No: ");
-            scanf("%d",&r);
-            teste = retira_no(teste,r);
+        if((usuario == 'i') || (usuario == 'a') || (usuario == 'r') || (usuario == 't') || (usuario == 'c') || (usuario == 's') || (usuario == 'p') || (usuario == 'g')) {
+            switch(usuario){
+                case 'i':
+                    printf("No: ");
+                    scanf("%d", &n);
+                    printf("\n ");
+                    teste = insere_no(teste, n);
 
-            break;
+                    break;
+                case 'a':
+                    printf("No A: ");
+                    scanf("%d", &a1);
+                    printf("No B: ");
+                    scanf("%d", &a2);
+                    insere_aresta(teste, a1, a2);
 
-        case 'p':
-            gera_html(teste);
-            break;
+                    break;
+                case 'r':
+                    printf("No: ");
+                    scanf("%d", &r);
+                    teste = retira_no(teste, r);
 
-        case 't':
-            printf("No A: ");
-            scanf("%d",&t1);
-            printf("No B: ");
-            scanf("%d",&t2);
-            retira_aresta(teste,t1,t2);
-            break;
+                    break;
+                case 'p':
+                    gera_html(teste);
 
-        case 'g':
-            salva_grafo(teste, saida);
-            break;
+                    break;
+                case 't':
+                    printf("No A: ");
+                    scanf("%d", &t1);
+                    printf("No B: ");
+                    scanf("%d", &t2);
+                    retira_aresta(teste, t1, t2);
 
-        case 'c':
-            zera_visitados(teste);
-            conexidade(teste,teste);
-            if(testar_conexo(teste)==1){
-                printf("Grafo conexo\n");
-                pontes(teste);
-            }else{
-                printf("Grafo nao conexo\n");
-                TL * l = inicializa_lista();
-                l = componentes(teste,teste,1,l);
+                    break;
+                case 'g':
+                    salva(teste, saida);
+
+                    break;
+                case 'c':
+                    zera_visitados(teste);
+                    conexidade(teste, teste);
+
+                    if(conexo(teste) == 1) {
+                        printf("Grafo conexo\n");
+                        pontes(teste);
+                    } else {
+                        printf("Grafo nao conexo\n");
+                        Lista *l = inicializa_lista();
+                        l = componentes(teste, teste, 1, l);
+                    }
+
+                    break;
             }
-
-            break;
-
-        }
-       }else {
+       } else {
             printf("<<<ENTRADA INVALIDA>>>\n \n");
        }
-    }while(usuario != 's');
+    } while(usuario != 's');
 
     libera(teste);
     return 0;

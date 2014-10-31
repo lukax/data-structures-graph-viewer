@@ -50,3 +50,25 @@
 1402019853 c:\grafos\metodosgrafo.h
 	"grafo.h"
 
+1414718706 source:c:\users\thiago\documents\github\trabalho-de-ed-i\grafos\grafo.c
+	<stdio.h>
+	<stdlib.h>
+	"grafo.h"
+	"lista.h"
+
+1414624839 c:\users\thiago\documents\github\trabalho-de-ed-i\grafos\grafo.h
+
+1414718336 c:\users\thiago\documents\github\trabalho-de-ed-i\grafos\lista.h
+	"grafo.h"
+
+1414719030 source:c:\users\thiago\documents\github\trabalho-de-ed-i\grafos\lista.c
+	<stdio.h>
+	<stdlib.h>
+	"lista.h"
+
+1414718663 source:c:\users\thiago\documents\github\trabalho-de-ed-i\grafos\main.c
+	<stdio.h>
+	<stdlib.h>
+	"grafo.h"
+	"lista.h"
+
